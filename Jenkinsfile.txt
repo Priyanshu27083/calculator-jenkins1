@@ -1,33 +1,33 @@
-pipeline{
-  agent any
-  stages{
-    stage('Checkout'){
-      steps{
-        checkout scm
-      }
+pipeline {
+agent any
+
+stages {
+    stage('Build') {
+        steps {
+            bat """
+                if exist out rmdir /s /q out
+                mkdir out
+                javac -d out Calculator.java
+            """
+        }
     }
-    stage('Build'){
-      steps{
-        bat """
-          if exists out rmdir /s /q out
-          mkdir out
-          javac -d out Calculator.java
-        """
-      }
+
+    stage('Run') {
+        steps {
+            bat """
+                java -cp out Calculator
+                echo Build_OK > artifact.txt
+            """
+        }
     }
-    stage('Run'){
-      steps{
-        bat """
-        java -cp out Calculator
-        echo Build_OK > artifact.txt
-        """
-      }
-    }
-  }
-  post {
+}
+
+post {
     always {
-      archiveArtifacts artifacts: 'artifact.txt, out/**',
-      allowEmptyArchive: false
+        archiveArtifacts artifacts: 'artifact.txt, out/**',
+                         allowEmptyArchive: false
     }
-  } 
+}
+
+
 }
