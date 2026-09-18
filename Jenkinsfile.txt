@@ -1,5 +1,5 @@
 pipeline{
-  agent none{
+  agent none
   stages{
     stage('Checkout'){
       steps{
@@ -30,5 +30,4 @@ pipeline{
       allowEmptyArchive: false
     }
   } 
-  }
 }
