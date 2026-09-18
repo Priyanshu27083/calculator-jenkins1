@@ -1,0 +1,29 @@
+pipeline{
+  agent none
+  stages{
+    stage('Checkout'){
+      steps{
+        checkout scm
+      }
+    }
+    stage('Build'){
+      steps{
+        bat """
+          if exists out rmdir /s /q out
+          mkdir out
+          javac -d out Calculator.java
+      }
+    }
+    stage('Run'){
+      steps{
+        java -cp out Calculator
+        echo Build_OK > artifact.txt
+      }
+    }
+  }
+  post{
+    always{
+      archiveArtifacts artifacts:"artifact.txt, out/**" emptyArchiveArtifacts:false
+    }
+  }  
+}
